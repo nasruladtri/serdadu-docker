@@ -65,6 +65,10 @@ services:
       - "io.portainer.stack.name=serdadu"
       - "com.serdadu.service=database"
       - "com.serdadu.description=MySQL Database Server"
+    networks:
+      - serdadu_network
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   # phpMyAdmin (Optional - untuk development)
   phpmyadmin:
