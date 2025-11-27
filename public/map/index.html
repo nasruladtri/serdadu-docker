@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            color: #222;
+            background: #fff;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 18px auto;
+            padding: 0 16px;
+        }
+        h1 { margin: 8px 0 12px; font-weight:600 }
+        #map {
+            width: 100%;
+            min-height: 60vh; /* responsive height */
+            border: 1px solid #e6e6e6;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            border-radius: 6px;
+        }
+        .legend {
+            background: white;
+            padding: 8px 10px;
+            line-height: 18px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-size: 13px;
+        }
+        .legend-item { display:flex; align-items:center; gap:8px }
+        .legend-color { width:18px; height:12px; border-radius:2px; display:inline-block }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Peta Madiun</h1>
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- GeoJSON data (pre-generated) -->
+    <script src="Peta Madiun/kab.js"></script>
+    <script src="Peta Madiun/kec.js"></script>
+    <script src="Peta Madiun/kel.js"></script>
+
+    <script>
+        // Base layers
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        });
+
+        var carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+        });
+
+        var map = L.map('map', {
+            center: [-7.629, 111.515],
+            zoom: 11,
+            layers: [carto]
+        });
+
+        L.control.scale({imperial:false, maxWidth: 160}).addTo(map);
+
+        // Styling functions
+        function styleKab(feature) {
+            return {
+                color: '#c0392b', // border
+                weight: 2,
+                fill: false
+            };
+        }
+        function styleKec(feature) {
+            return {
+                color: '#e67e22',
+                weight: 1.2,
+                fillColor: '#f39c12',
+                fillOpacity: 0.12
+            };
+        }
+        function styleKel(feature) {
+            return {
+                color: '#2980b9',
+                weight: 0.8,
+                fillColor: '#3498db',
+                fillOpacity: 0.08
+            };
+        }
+
+        function onEachFeatureFactory(name) {
+            return function(feature, layer) {
+                var props = feature && feature.properties ? feature.properties : {};
+                // build a small HTML table of properties
+                var html = '<div style="max-width:280px"><strong>' + (name || 'Feature') + '</strong><table style="margin-top:6px">';
+                for (var k in props) {
+                    if (!props.hasOwnProperty(k)) continue;
+                    html += '<tr><td style="padding:2px 6px;vertical-align:top;color:#555;font-size:13px"><strong>' + k + '</strong></td>' +
+                        '<td style="padding:2px 6px;vertical-align:top;color:#222;font-size:13px">' + (props[k] === null ? '' : String(props[k])) + '</td></tr>';
+                }
+                html += '</table></div>';
+                layer.bindPopup(html);
+            };
+        }
+
+        // Create layers from embedded JS data (kab, kec, kel)
+        var kabLayer = L.geoJSON(window.kab, {
+            style: styleKab,
+            onEachFeature: onEachFeatureFactory('Kabupaten')
+        }).addTo(map);
+
+        var kecLayer = L.geoJSON(window.kec, {
+            style: styleKec,
+            onEachFeature: onEachFeatureFactory('Kecamatan')
+        });
+
+        var kelLayer = L.geoJSON(window.kel, {
+            style: styleKel,
+            onEachFeature: onEachFeatureFactory('Kelurahan/Desa')
+        });
+
+        // Fit map to kab layer bounds if available
+        try {
+            var bounds = kabLayer.getBounds();
+            if (bounds && bounds.isValid && bounds.isValid()) {
+                map.fitBounds(bounds.pad(0.05));
+            }
+        } catch (e) { /* ignore fitBounds errors */ }
+
+        // Layer control
+        var baseLayers = {
+            'Carto Light': carto,
+            'OpenStreetMap': osm
+        };
+        var overlays = {
+            'Kabupaten Madiun (batas)': kabLayer,
+            'Kecamatan': kecLayer,
+            'Kelurahan/Desa': kelLayer
+        };
+
+        L.control.layers(baseLayers, overlays, {collapsed:false, position:'topright'}).addTo(map);
+
+        // Add a small legend
+        var legend = L.control({position: 'bottomright'});
+        legend.onAdd = function () {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = '<div class="legend-item"><span class="legend-color" style="background:#c0392b"></span> Kabupaten</div>' +
+                '<div class="legend-item" style="margin-top:6px"><span class="legend-color" style="background:#e67e22"></span> Kecamatan</div>' +
+                '<div class="legend-item" style="margin-top:6px"><span class="legend-color" style="background:#2980b9"></span> Kelurahan/Desa</div>';
+            return div;
+        };
+        legend.addTo(map);
+
+        // Optional: add a sample marker (comment out if not needed)
+        // L.marker([-7.629, 111.515]).addTo(map).bindPopup('Contoh Lokasi').openPopup();
+    </script>
+</body>
+</html>

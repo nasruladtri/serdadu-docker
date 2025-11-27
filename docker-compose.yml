@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # Laravel Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: serdadu_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_KEY=${APP_KEY}
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-serdadu}
+      - DB_USERNAME=${DB_USERNAME:-serdadu_user}
+      - DB_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${APP_PORT:-8000}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - serdadu_network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: serdadu_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-serdadu}
+      MYSQL_USER: ${DB_USERNAME:-serdadu_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - serdadu_network
+
+  # phpMyAdmin (Optional - untuk development)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: serdadu_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "${PMA_PORT:-8080}:80"
+    depends_on:
+      - db
+    networks:
+      - serdadu_network
+    profiles:
+      - dev
+
+  # Redis (Optional - untuk caching dan queue)
+  redis:
+    image: redis:7-alpine
+    container_name: serdadu_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - serdadu_network
+    profiles:
+      - cache
+
+networks:
+  serdadu_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local

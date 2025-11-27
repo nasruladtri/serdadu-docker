@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('download_logs', function (Blueprint $table) {
+            $table->id();
+            $table->string('full_name')->nullable();
+            $table->text('address')->nullable();
+            $table->string('occupation')->nullable();
+            $table->string('institution')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->text('purpose')->nullable();
+            $table->string('download_type');
+            $table->string('file_type');
+            $table->string('category')->nullable();
+            $table->json('filters')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('download_logs');
+    }
+};

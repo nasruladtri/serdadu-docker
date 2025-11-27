@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Peta Madiun (tanpa fetch)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>html,body,#map{height:100%;margin:0}.label{background:rgba(255,255,255,.85);border:1px solid #999;padding:2px 6px;border-radius:4px;font:11px system-ui}</style>
+</head>
+<body>
+<div id="map"></div>
+
+<script src="kab.js"></script>
+<script src="kec.js"></script>
+<script src="kel.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// init map
+const map = L.map('map').setView([-7.62, 111.66], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
+
+// gaya
+const palette=['#9ecae1','#fdd0a2','#c7e9c0','#c6dbef','#fdae6b','#b2df8a','#fccde5','#a6cee3','#ffed6f','#cab2d6','#bc80bd','#fb9a99','#8dd3c7'];
+const colorByName = n=>{let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;return palette[h%palette.length];};
+const styleKab={color:'#111',weight:2,fillOpacity:0};
+const styleKec=f=>{const p=f.properties||{};const n=p.NAMOBJ||p.name||'Kecamatan';return {color:'#1d4ed8',weight:1.2,fillColor:colorByName(n),fillOpacity:.35}};
+const styleKel={color:'#059669',weight:.8,fillOpacity:.15};
+
+const getName=(props,keys,fallback)=>{
+  for(const key of keys){
+    if(props[key]) return props[key];
+  }
+  return fallback;
+};
+
+const loadGeoJSON=(url,globalName)=>{
+  if(typeof window!=='undefined'&&window[globalName]){
+    return Promise.resolve(window[globalName]);
+  }
+  return fetch(url).then(r=>{
+  if(!r.ok) throw new Error(`Gagal memuat ${url}: ${r.statusText}`);
+  return r.json();
+  });
+};
+
+(async()=>{
+  try{
+    const [kabData,kecData,kelData]=await Promise.all([
+      loadGeoJSON('35.19_Madiun.geojson','kab'),
+      loadGeoJSON('35.19_kecamatan.geojson','kec'),
+      loadGeoJSON('35.19_kelurahan.geojson','kel')
+    ]);
+
+    const overlayLayers={};
+
+    const layerKab=L.geoJSON(kabData,{style:styleKab,onEachFeature:(f,l)=>{
+      const p=f.properties||{};
+      const n=getName(p,['nm_dati2','NAMOBJ','name'],'Kabupaten');
+      l.bindPopup('<b>'+n+'</b>');
+    }});
+    layerKab.addTo(map);
+    overlayLayers['Kabupaten']=layerKab;
+
+    const layerKec=L.geoJSON(kecData,{style:styleKec,onEachFeature:(f,l)=>{
+      const p=f.properties||{};
+      const n=getName(p,['nm_kecamatan','NAMOBJ','name'],'Kecamatan');
+      l.bindPopup('<b>'+n+'</b>');
+    }});
+    layerKec.addTo(map);
+    overlayLayers['Kecamatan']=layerKec;
+
+    const layerKel=L.geoJSON(kelData,{style:styleKel,onEachFeature:(f,l)=>{
+      const p=f.properties||{};
+      const n=getName(p,['nm_kelurahan','nm_desa','kelurahan','desa','NAMOBJ','name'],'Kel/Desa');
+      l.bindPopup('<b>'+n+'</b>');
+    }});
+    layerKel.addTo(map);
+    overlayLayers['Kelurahan/Desa']=layerKel;
+
+    if(layerKab.getLayers().length){
+      map.fitBounds(layerKab.getBounds(),{padding:[20,20]});
+    }else if(layerKec.getLayers().length){
+      map.fitBounds(layerKec.getBounds(),{padding:[20,20]});
+    }
+
+    layerKec.eachLayer(l=>{
+      if(!l.getBounds||!l.feature) return;
+      const c=l.getBounds().getCenter();
+      const p=l.feature.properties||{};
+      const n=getName(p,['nm_kecamatan','NAMOBJ','name'],'Kecamatan');
+      L.marker(c,{icon:L.divIcon({className:'label',html:n,iconSize:null}),interactive:false}).addTo(map);
+    });
+
+    L.control.layers(null,overlayLayers,{collapsed:false}).addTo(map);
+  }catch(err){
+    console.error(err);
+    const message='Terjadi kesalahan saat memuat data peta. Silakan cek ulang nama file GeoJSON.';
+    L.popup().setLatLng(map.getCenter()).setContent(message).openOn(map);
+  }
+})();
+</script>
+</body>
+</html>

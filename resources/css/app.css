@@ -1,0 +1,804 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+/* Source files untuk content scanning - Tailwind v4 akan scan file-file ini untuk class yang digunakan */
+@source "../../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../../storage/framework/views/*.php";
+@source "../views/**/*.blade.php";
+@source "../js/**/*.js";
+
+/* Custom theme configuration menggunakan CSS variables */
+@theme {
+    /* Font family - sesuai dengan font yang digunakan di layout */
+    --font-family-sans: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    /* Custom colors untuk proyek */
+    --color-primary: #009B4D;
+    --color-primary-50: #f0fdf4;
+    --color-primary-100: #dcfce7;
+    --color-primary-500: #009B4D;
+    --color-primary-600: #007a3d;
+    --color-primary-700: #006532;
+    --color-secondary: #6b7280;
+
+    /* Breakpoints default Tailwind */
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+}
+
+:root {
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-strong: #f1f5f9;
+    --color-text: #0f172a;
+    --color-text-muted: #475569;
+    --color-border: #e2e8f0;
+    --color-chart-axis: #334155;
+    --color-chart-grid: rgba(148, 163, 184, 0.35);
+    --shadow-elevated: 0 1px 3px rgba(15, 23, 42, 0.12), 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.dark {
+    --color-bg: #0b1526;
+    --color-surface: #0f172a;
+    --color-surface-strong: #16233a;
+    --color-text: #e2e8f0;
+    --color-text-muted: #cbd5e1;
+    --color-border: #1f2937;
+    --color-chart-axis: #cbd5e1;
+    --color-chart-grid: rgba(148, 163, 184, 0.3);
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Utility classes untuk komponen modern */
+.bg-primary {
+    background-color: var(--color-primary);
+}
+
+.text-primary {
+    color: var(--color-primary);
+}
+
+.ring-primary {
+    --tw-ring-color: var(--color-primary);
+}
+
+.border-primary {
+    border-color: var(--color-primary);
+}
+
+.hover\:bg-primary:hover {
+    background-color: var(--color-primary);
+}
+
+.focus\:ring-primary:focus {
+    --tw-ring-color: var(--color-primary);
+}
+
+/* Form elements */
+select {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+select:focus {
+    border-color: #009B4D;
+    box-shadow: 0 0 0 2px rgba(0, 155, 77, 0.18);
+}
+
+select option:checked,
+select option:focus {
+    background: #009B4D !important;
+    color: #ffffff !important;
+}
+
+select option:hover {
+    background: #009B4D !important;
+    color: #ffffff !important;
+}
+
+select option:active {
+    background: #009B4D !important;
+    color: #ffffff !important;
+}
+
+select option:checked:hover,
+select option:checked:focus,
+select option:focus:hover {
+    background: #009B4D !important;
+    color: #ffffff !important;
+}
+
+/* Fix untuk sidebar collapsed - pastikan konten tidak overflow */
+aside.fixed {
+    overflow: hidden;
+}
+
+/* Pastikan main content tidak overlap dengan sidebar */
+main {
+    position: relative;
+    z-index: 1;
+    overflow-x: hidden;
+}
+
+/* Pastikan konten sidebar yang collapsed tidak terlihat */
+aside nav a {
+    position: relative;
+}
+
+aside nav a span[x-show] {
+    transition: opacity 0.2s ease;
+}
+
+/* Hide elements with x-cloak until Alpine.js loads */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Ensure sidebar is visible on desktop */
+@media (min-width: 1024px) {
+    aside.fixed {
+        display: flex !important;
+        flex-direction: column;
+    }
+}
+
+/* Card Component Styles */
+.dk-card {
+    background: var(--color-surface);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-elevated);
+    border: 1px solid var(--color-border);
+}
+
+.dk-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+}
+
+/* Table Component Styles */
+.dk-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.dk-table thead {
+    background-color: var(--color-surface-strong);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.dk-table thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-right: 1px solid var(--color-border);
+}
+
+.dk-table thead th:last-child {
+    border-right: none;
+}
+
+.dk-table thead th.text-right {
+    text-align: right;
+}
+
+.dk-table thead th.text-center {
+    text-align: center;
+}
+
+.dk-table thead th.text-left {
+    text-align: left;
+}
+
+.dk-table tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.dk-table tbody td:last-child {
+    border-right: none;
+}
+
+.dk-table tbody tr:hover {
+    background-color: var(--color-surface-strong);
+}
+
+.dk-table tbody tr {
+    background-color: #ffffff;
+}
+
+.dk-table tbody tr:nth-child(even) {
+    background-color: #f6f9fd;
+}
+
+.dark .dk-table tbody tr {
+    background-color: #0f1a2d;
+}
+
+.dark .dk-table tbody tr:nth-child(even) {
+    background-color: #111f35;
+}
+
+.dark .dk-table tbody tr:hover {
+    background-color: #152540;
+}
+
+.dk-table tfoot {
+    background-color: var(--color-surface-strong);
+    border-top: 2px solid var(--color-border);
+}
+
+.dk-table tfoot th {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: left;
+    border-right: 1px solid var(--color-border);
+}
+
+.dk-table tfoot th:last-child {
+    border-right: none;
+}
+
+.dk-table tfoot th.text-right {
+    text-align: right;
+}
+
+.dk-table tfoot th.text-center {
+    text-align: center;
+}
+
+.dk-table tfoot th.text-left {
+    text-align: left;
+}
+
+.dk-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dk-table-scroll.has-scroll {
+    overflow-y: auto;
+}
+
+.dk-table-scroll::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.dk-table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.dk-table-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.dk-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Tab Component Styles */
+.dk-tabs {
+    display: flex;
+    border-top: none;
+    margin-top: 0;
+    padding: 0;
+    list-style: none;
+    gap: 0.5rem;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f1f1;
+    position: relative;
+    z-index: 1;
+}
+
+.dk-tabs::-webkit-scrollbar {
+    height: 6px;
+}
+
+.dk-tabs::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dk-tabs::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.dk-tabs::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.dk-tab-button {
+    padding: 1.5rem 1.5rem 2.5rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    background: transparent;
+    border: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-top: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 0;
+    line-height: 1.2;
+    min-height: 4rem;
+    border-radius: 0 0 0.375rem 0.375rem;
+    height: 100%;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transform: scale(1);
+}
+
+.dk-tab-button>* {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.dk-tab-button:hover:not(.active) {
+    color: #009B4D;
+    background-color: rgba(0, 155, 77, 0.12);
+    border-top: 2px solid transparent;
+    transform: scale(1.03);
+    font-size: 0.9375rem;
+    font-weight: 550;
+}
+
+.dk-tab-button {
+    position: relative;
+}
+
+.dk-tab-button-indicator {
+    display: none;
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background-color: #009B4D;
+    z-index: 30;
+}
+
+.dk-tab-button.active .dk-tab-button-indicator,
+.dk-tab-button.active:hover .dk-tab-button-indicator,
+button.dk-tab-button.active .dk-tab-button-indicator,
+button.dk-tab-button.active:hover .dk-tab-button-indicator,
+#aggregateTabs button.dk-tab-button.active .dk-tab-button-indicator,
+#aggregateTabs button.dk-tab-button.active:hover .dk-tab-button-indicator {
+    display: block;
+}
+
+.dk-tab-button.active,
+.dk-tab-button.active:hover,
+button.dk-tab-button.active,
+button.dk-tab-button.active:hover,
+#aggregateTabs button.dk-tab-button.active,
+#aggregateTabs button.dk-tab-button.active:hover {
+    color: #009B4D !important;
+    background-color: transparent !important;
+    border-top: 5px solid #009B4D !important;
+    margin-top: -3px;
+    z-index: 25;
+    position: relative;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+    align-items: center !important;
+}
+
+.dark .dk-tabs {
+    border-top-color: var(--color-border);
+}
+
+.dark .dk-tab-button {
+    color: var(--color-text) !important;
+}
+
+.dark .dk-tab-button:hover:not(.active) {
+    color: var(--color-text) !important;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .dk-tab-button.active,
+.dark #aggregateTabs button.dk-tab-button.active {
+    color: var(--color-text) !important;
+    border-top-color: var(--color-text) !important;
+}
+
+.dk-tab-content {
+    padding: 1.5rem;
+}
+
+.dk-tab-pane {
+    display: none;
+}
+
+.dk-tab-pane.show {
+    display: block;
+}
+
+.dk-tab-pane.active {
+    display: block;
+}
+
+.dk-tab-pane.hidden {
+    display: none !important;
+}
+
+/* Table Heading Component Styles */
+.dk-table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dk-table-heading__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dk-table-heading__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.dk-table-heading__badge {
+    display: flex;
+    align-items: center;
+}
+
+.dk-table-heading__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.dk-table-heading__fullscreen {
+    display: flex;
+    align-items: center;
+}
+
+.dk-table-heading__fullscreen-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dk-table-heading__fullscreen-btn:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.chart-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.55rem;
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    box-shadow: var(--shadow-elevated);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.chart-action-btn:hover {
+    background: var(--color-surface-strong);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.dk-table-heading__dropdown {
+    min-width: 200px;
+}
+
+.chart-legend-item {
+    color: var(--color-text-muted);
+}
+
+.theme-toggle-btn {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    box-shadow: var(--shadow-elevated);
+}
+
+.theme-toggle-btn:hover {
+    background: var(--color-surface-strong);
+}
+
+/* Dark mode: sidebar hover background */
+.dark .sidebar-nav-link:not(.active):hover {
+    background-color: #152a4a;
+    color: #e2e8f0;
+}
+
+.dark .bg-white,
+.dark .bg-gray-50 {
+    background-color: var(--color-surface) !important;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700 {
+    color: var(--color-text) !important;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500 {
+    color: var(--color-text-muted) !important;
+}
+
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-slate-500 {
+    color: var(--color-text-muted) !important;
+}
+
+.dark select,
+.dark select:focus {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.dark select option {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+    border-color: var(--color-border) !important;
+}
+
+.dark header,
+.dark aside {
+    background-color: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+}
+
+.dark .js-fullscreen-btn img {
+    filter: brightness(0) invert(1);
+}
+
+.dark .breadcrumb-icon-image,
+.dark .breadcrumb-icon-chart {
+    filter: brightness(0) invert(1);
+}
+
+.dark nav svg {
+    stroke: var(--color-text);
+}
+
+.dark .chart-wrapper {
+    background-color: var(--color-surface) !important;
+    background-image: none !important;
+    border-color: var(--color-border) !important;
+}
+
+.dark .chart-container {
+    background-color: var(--color-surface) !important;
+}
+
+.dark .chart-legend-item {
+    color: var(--color-text) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dk-table-heading {
+        flex-direction: column;
+    }
+
+    .dk-table-heading__actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .dk-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dk-tab-button {
+        white-space: nowrap;
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+    }
+}
+
+/* ========================================
+   Page Entrance Animations
+   ======================================== */
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Animation Classes */
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+/* Stagger Delays */
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+.delay-700 {
+    animation-delay: 0.7s;
+}
+
+.delay-800 {
+    animation-delay: 0.8s;
+}
+
+/* Mobile optimizations - faster animations */
+@media (max-width: 640px) {
+
+    /* Reduce animation delays on mobile */
+    .delay-100,
+    .delay-200,
+    .delay-300,
+    .delay-400,
+    .delay-500,
+    .delay-600,
+    .delay-700,
+    .delay-800 {
+        animation-delay: 0s;
+    }
+
+    /* Faster animations on mobile */
+    .animate-fade-in-up,
+    .animate-fade-in,
+    .animate-slide-in-left,
+    .animate-slide-in-right,
+    .animate-scale-in {
+        animation-duration: 0.4s;
+    }
+}

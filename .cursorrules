@@ -1,0 +1,35 @@
+# Project Context
+Project: SERDADU (Sistem Rekap Data Terpadu)
+Stack: Laravel 11, PHP 8.2+, MySQL, Tailwind CSS v4, Alpine.js v3, Vite.
+
+# General Rules
+- Gunakan Bahasa Indonesia untuk penjelasan dan komentar.
+- Tulis kode yang bersih, mudah dibaca, dan maintainable.
+- Ikuti standar PSR-12 untuk PHP.
+
+# Backend (Laravel)
+- Gunakan Eloquent ORM untuk interaksi database kecuali performa membutuhkan Query Builder.
+- Validasi input user menggunakan Form Request atau `$request->validate()`.
+- Gunakan `Log::info()` atau `Log::error()` untuk logging. Hindari `dd()` di production code.
+- Pastikan setiap perubahan struktur database disertai file migration.
+- Controller harus tetap ramping (thin controllers), pindahkan logika kompleks ke Service atau Action classes.
+
+# Frontend
+- Gunakan **Tailwind CSS v4** untuk styling. Hindari CSS custom di file terpisah kecuali mendesak.
+- Gunakan **Alpine.js v3** untuk interaksi UI sederhana (modal, dropdown, toggle).
+- Hindari jQuery jika memungkinkan.
+- Pastikan desain responsif (mobile-first).
+
+# Security (High Priority)
+- **Input Validation**: Jangan pernah mempercayai input user. Validasi seketat mungkin (type, length, format).
+- **SQL Injection**: Selalu gunakan Eloquent atau Query Builder binding. Jangan pernah concatenate string langsung ke query SQL.
+- **XSS Protection**: Selalu escape output user. Hati-hati penggunaan `{!! !!}` di Blade.
+- **CSRF**: Pastikan semua form `POST`, `PUT`, `DELETE` memiliki token `@csrf`.
+- **Authorization**: Gunakan Laravel Policies/Gates untuk membatasi akses resource. Jangan hanya cek login status.
+- **File Uploads**: Validasi file tidak hanya dari ekstensi tapi juga MIME type dan konten. Simpan di luar public folder jika sensitif.
+- **Sensitive Data**: Jangan pernah hardcode credentials/secrets di code. Gunakan `.env`.
+
+# Workflow
+- Sebelum mengubah file penting, pastikan Anda memahami konteksnya.
+- Jika ada error, jelaskan penyebabnya dan tawarkan solusi.
+- Prioritaskan keamanan di atas kenyamanan implementasi.
