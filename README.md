@@ -66,6 +66,77 @@ SERDADU adalah aplikasi web berbasis Laravel yang dirancang untuk menyajikan dat
    npm run build
    ```
 
+## 🐳 Deployment dengan Docker
+
+### Quick Start
+Untuk deployment menggunakan Docker, ikuti langkah berikut:
+
+1. **Copy Environment File**
+   ```bash
+   cp .env.docker .env
+   ```
+
+2. **Edit Konfigurasi**
+   Sesuaikan file `.env` dengan konfigurasi Anda (password database, APP_URL, dll).
+
+3. **Build dan Jalankan Container**
+   ```bash
+   docker compose build
+   docker compose up -d
+   ```
+
+4. **Setup Laravel di Container**
+   ```bash
+   docker compose exec app php artisan key:generate
+   docker compose exec app php artisan migrate --force
+   docker compose exec app php artisan config:cache
+   docker compose exec app php artisan route:cache
+   docker compose exec app php artisan view:cache
+   ```
+
+5. **Buat Admin User**
+   ```bash
+   docker compose exec app php artisan user:create-admin
+   ```
+
+### Atau Gunakan Script Deployment (Linux/Mac)
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+### Services yang Tersedia
+| Service | Port | Deskripsi |
+|---------|------|-----------|
+| app | 8000 | Aplikasi Laravel |
+| db | 3306 | MySQL Database |
+| phpmyadmin | 8080 | Admin Database (dev only) |
+| redis | 6379 | Cache/Queue (optional) |
+
+### Akses Aplikasi
+- **Aplikasi:** http://localhost:8000
+- **phpMyAdmin:** http://localhost:8080 (jalankan dengan `docker compose --profile dev up -d`)
+
+### Perintah Docker yang Sering Digunakan
+```bash
+# Melihat logs
+docker compose logs -f app
+
+# Akses shell container
+docker compose exec app bash
+
+# Menjalankan artisan command
+docker compose exec app php artisan [command]
+
+# Stop containers
+docker compose down
+
+# Backup database
+docker compose exec db mysqldump -u root -p serdadu > backup.sql
+```
+
+> 📖 **Dokumentasi Lengkap:** Lihat [DOCKER_README.md](DOCKER_README.md) untuk panduan Docker yang lebih detail.
+
 ## 👥 Manajemen User Admin
 Karena pendaftaran publik dinonaktifkan demi keamanan, gunakan perintah CLI berikut untuk membuat akun administrator:
 
