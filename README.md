@@ -137,6 +137,41 @@ docker compose exec db mysqldump -u root -p serdadu > backup.sql
 
 > 📖 **Dokumentasi Lengkap:** Lihat [DOCKER_README.md](DOCKER_README.md) untuk panduan Docker yang lebih detail.
 
+## 🐳 Deployment via Portainer.io
+
+SERDADU dapat dengan mudah di-deploy menggunakan Portainer.io untuk manajemen container yang lebih user-friendly.
+
+### Quick Start di Portainer
+
+1. **Buat Stack Baru** di Portainer dengan nama `serdadu`
+2. **Pilih metode deployment**:
+   - **Git Repository**: Arahkan ke repository ini
+   - **Web Editor**: Copy-paste `docker-compose.yml`
+3. **Set Environment Variables** (minimal):
+   ```
+   APP_KEY=                          # Generate setelah deploy
+   DB_PASSWORD=YourStrongPassword!
+   DB_ROOT_PASSWORD=YourRootPassword!
+   APP_URL=http://your-domain.com
+   ```
+4. **Deploy Stack**
+5. **Setup Laravel** via Console:
+   ```bash
+   php artisan key:generate
+   php artisan migrate --force
+   php artisan user:create-admin
+   ```
+
+### Fitur Portainer
+
+- ✅ **GUI Management**: Kelola container via web interface
+- ✅ **Easy Updates**: Pull & redeploy dengan satu klik
+- ✅ **Log Monitoring**: Lihat logs real-time
+- ✅ **Resource Monitoring**: Monitor CPU, memory, network
+- ✅ **Environment Variables**: Kelola env vars tanpa edit file
+
+> 📖 **Panduan Lengkap**: Lihat [PORTAINER_DEPLOYMENT.md](PORTAINER_DEPLOYMENT.md) untuk tutorial step-by-step, troubleshooting, dan best practices.
+
 ## 👥 Manajemen User Admin
 Karena pendaftaran publik dinonaktifkan demi keamanan, gunakan perintah CLI berikut untuk membuat akun administrator:
 
