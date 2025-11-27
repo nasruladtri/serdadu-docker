@@ -87,8 +87,6 @@ services:
       - db
     networks:
       - serdadu_network
-    profiles:
-      - dev
     labels:
       - "io.portainer.stack.name=serdadu"
       - "com.serdadu.service=phpmyadmin"
