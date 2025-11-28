@@ -391,6 +391,25 @@ aside nav a span[x-show] {
     z-index: 30;
 }
 
+/* Add colored box indicator before text */
+.dk-tab-button-text {
+    position: relative;
+    padding-left: 0;
+    transition: all 0.2s ease;
+}
+
+.dk-tab-button.active .dk-tab-button-text::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #009B4D;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0, 155, 77, 0.3);
+}
+
 .dk-tab-button.active .dk-tab-button-indicator,
 .dk-tab-button.active:hover .dk-tab-button-indicator,
 button.dk-tab-button.active .dk-tab-button-indicator,
@@ -407,7 +426,7 @@ button.dk-tab-button.active:hover,
 #aggregateTabs button.dk-tab-button.active,
 #aggregateTabs button.dk-tab-button.active:hover {
     color: #009B4D !important;
-    background-color: transparent !important;
+    background-color: rgba(0, 155, 77, 0.08) !important;
     border-top: 5px solid #009B4D !important;
     margin-top: -3px;
     z-index: 25;
