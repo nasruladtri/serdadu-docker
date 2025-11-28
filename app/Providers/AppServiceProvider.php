@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production (behind reverse proxy)
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+        
         \Illuminate\Support\Facades\View::composer('layouts.admin', \App\View\Composers\AdminSidebarComposer::class);
     }
 }
