@@ -1215,8 +1215,10 @@
         <div class="flex flex-col gap-3 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div class="text-xs text-gray-500 whitespace-normal sm:whitespace-nowrap">
                 Copyright © 2025 
-                <a href="{{ url('/') }}" class="text-[#009B4D] hover:underline" target="_blank" rel="noopener">Nasrul Aditri R Serdadu</a>
+                <a href="#" class="text-[#009B4D] hover:underline">Nasrul Aditri R</a>
+                <a href="{{ url('/') }}" class="text-[#009B4D] hover:underline" target="_blank" rel="noopener">Serdadu</a>
                 <a href="https://dukcapil.madiunkab.go.id" class="text-[#009B4D] hover:underline" target="_blank" rel="noopener">Dukcapil Kab. Madiun</a>
+                <span>All rights reserved.</span>
                 <span class="mx-2">|</span>
                 <a href="{{ route('public.terms') }}" class="text-[#009B4D] hover:underline">Syarat & Ketentuan</a>
             </div>
