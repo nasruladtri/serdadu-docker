@@ -1,6 +1,27 @@
 version: '3.8'
 
 services:
+  # Nginx Proxy Manager
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: serdadu_nginx_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+      - "81:81" # Admin Web UI
+    environment:
+      DB_SQLITE_FILE: "/data/database.sqlite"
+    volumes:
+      - nginx_data:/data
+      - nginx_letsencrypt:/etc/letsencrypt
+    networks:
+      - serdadu_network
+    labels:
+      - "io.portainer.stack.name=serdadu"
+      - "com.serdadu.service=proxy"
+      - "com.serdadu.description=Nginx Proxy Manager for Reverse Proxy and SSL"
+
   # Laravel Application
   app:
     build:
@@ -18,7 +39,7 @@ services:
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
       - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL:-http://localhost:8000}
+      - APP_URL=${APP_URL:-https://serdadu.nasruladitri.space}
       - APP_TIMEZONE=${APP_TIMEZONE:-Asia/Jakarta}
       - APP_LOCALE=${APP_LOCALE:-id}
 
@@ -34,13 +55,14 @@ services:
       - SESSION_DRIVER=${SESSION_DRIVER:-database}
       - SESSION_LIFETIME=${SESSION_LIFETIME:-120}
       - SESSION_ENCRYPT=${SESSION_ENCRYPT:-true}
+      - SESSION_DOMAIN=${SESSION_DOMAIN:-.nasruladitri.space}
       - CACHE_STORE=${CACHE_STORE:-database}
 
       # Logging
       - LOG_CHANNEL=${LOG_CHANNEL:-stack}
       - LOG_LEVEL=${LOG_LEVEL:-error}
-    ports:
-      - "${APP_PORT:-8000}:80"
+    expose:
+      - "80"
     depends_on:
       - db
     networks:
@@ -78,9 +100,10 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: https://db.nasruladitri.space
       UPLOAD_LIMIT: 100M
-    ports:
-      - "${PMA_PORT:-8080}:80"
+    expose:
+      - "80"
     depends_on:
       - db
     networks:
@@ -118,4 +141,8 @@ volumes:
   mysql_data:
     driver: local
   redis_data:
+    driver: local
+  nginx_data:
+    driver: local
+  nginx_letsencrypt:
     driver: local
