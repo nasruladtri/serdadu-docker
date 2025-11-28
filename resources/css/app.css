@@ -335,31 +335,28 @@ aside nav a span[x-show] {
 }
 
 .dk-tab-button {
-    padding: 1.5rem 1.5rem 2.5rem 1.5rem;
+    padding: 0.875rem 1.75rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #6b7280;
-    background: transparent;
-    border: 0;
-    border-right: 0;
-    border-bottom: 0;
-    border-left: 0;
-    border-top: 2px solid transparent;
+    color: #64748b;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1.5px solid #e2e8f0;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    margin-top: 0;
-    line-height: 1.2;
-    min-height: 4rem;
-    border-radius: 0 0 0.375rem 0.375rem;
+    line-height: 1.4;
+    min-height: 3rem;
+    border-radius: 12px;
     height: 100%;
     white-space: nowrap;
     flex-shrink: 0;
-    transform: scale(1);
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin: 0 4px;
 }
 
 .dk-tab-button>* {
@@ -369,54 +366,80 @@ aside nav a span[x-show] {
 
 .dk-tab-button:hover:not(.active) {
     color: #009B4D;
-    background-color: rgba(0, 155, 77, 0.12);
-    border-top: 2px solid transparent;
-    transform: scale(1.03);
-    font-size: 0.9375rem;
-    font-weight: 550;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-color: #86efac;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 155, 77, 0.15);
 }
 
 .dk-tab-button {
     position: relative;
+    overflow: hidden;
+}
+
+/* Glow effect for active tab */
+.dk-tab-button.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(135deg, #009B4D, #00c96d);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0.8;
+    z-index: 1;
 }
 
 .dk-tab-button-indicator {
     display: none;
-    position: absolute;
-    top: -5px;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background-color: #009B4D;
-    z-index: 30;
 }
 
-/* Add colored box indicator before text */
+/* Modern colored box indicator with glow */
 .dk-tab-button-text {
     position: relative;
     padding-left: 0;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .dk-tab-button.active .dk-tab-button-text::before {
     content: '';
     display: inline-block;
-    width: 12px;
-    height: 12px;
-    background-color: #009B4D;
-    border-radius: 2px;
-    margin-right: 8px;
-    vertical-align: middle;
-    box-shadow: 0 2px 4px rgba(0, 155, 77, 0.3);
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #009B4D 0%, #00c96d 100%);
+    border-radius: 3px;
+    box-shadow:
+        0 0 8px rgba(0, 155, 77, 0.6),
+        0 0 16px rgba(0, 155, 77, 0.3),
+        0 2px 4px rgba(0, 155, 77, 0.4);
+    animation: pulse-glow 2s ease-in-out infinite;
 }
 
-.dk-tab-button.active .dk-tab-button-indicator,
-.dk-tab-button.active:hover .dk-tab-button-indicator,
-button.dk-tab-button.active .dk-tab-button-indicator,
-button.dk-tab-button.active:hover .dk-tab-button-indicator,
-#aggregateTabs button.dk-tab-button.active .dk-tab-button-indicator,
-#aggregateTabs button.dk-tab-button.active:hover .dk-tab-button-indicator {
-    display: block;
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 8px rgba(0, 155, 77, 0.6),
+            0 0 16px rgba(0, 155, 77, 0.3),
+            0 2px 4px rgba(0, 155, 77, 0.4);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 12px rgba(0, 155, 77, 0.8),
+            0 0 24px rgba(0, 155, 77, 0.4),
+            0 2px 6px rgba(0, 155, 77, 0.5);
+        transform: scale(1.1);
+    }
 }
 
 .dk-tab-button.active,
@@ -425,17 +448,46 @@ button.dk-tab-button.active,
 button.dk-tab-button.active:hover,
 #aggregateTabs button.dk-tab-button.active,
 #aggregateTabs button.dk-tab-button.active:hover {
-    color: #009B4D !important;
-    background-color: rgba(0, 155, 77, 0.08) !important;
-    border-top: 5px solid #009B4D !important;
-    margin-top: -3px;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #009B4D 0%, #00b359 50%, #00c96d 100%) !important;
+    border-color: #00c96d !important;
     z-index: 25;
     position: relative;
-    font-size: 1rem !important;
+    font-size: 0.9375rem !important;
     font-weight: 600 !important;
-    transform: scale(1.05);
-    transition: all 0.2s ease;
-    align-items: center !important;
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 24px rgba(0, 155, 77, 0.25),
+        0 4px 12px rgba(0, 155, 77, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Shimmer effect on active tab */
+.dk-tab-button.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
+    animation: shimmer 3s infinite;
+    z-index: 3;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+
+    50%,
+    100% {
+        left: 100%;
+    }
 }
 
 .dark .dk-tabs {
@@ -443,18 +495,27 @@ button.dk-tab-button.active:hover,
 }
 
 .dark .dk-tab-button {
-    color: var(--color-text) !important;
+    color: #94a3b8 !important;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-color: #334155;
 }
 
 .dark .dk-tab-button:hover:not(.active) {
-    color: var(--color-text) !important;
-    background-color: rgba(255, 255, 255, 0.06);
+    color: #00c96d !important;
+    background: linear-gradient(135deg, #1a3a2e 0%, #0f2419 100%);
+    border-color: #00b359;
+    box-shadow: 0 4px 12px rgba(0, 201, 109, 0.2);
 }
 
 .dark .dk-tab-button.active,
 .dark #aggregateTabs button.dk-tab-button.active {
-    color: var(--color-text) !important;
-    border-top-color: var(--color-text) !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #009B4D 0%, #00b359 50%, #00c96d 100%) !important;
+    border-color: #00c96d !important;
+    box-shadow:
+        0 8px 24px rgba(0, 201, 109, 0.3),
+        0 4px 12px rgba(0, 155, 77, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
 }
 
 .dk-tab-content {
