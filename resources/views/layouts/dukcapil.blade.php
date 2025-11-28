@@ -1080,6 +1080,8 @@
                 <a href="https://dukcapil.madiunkab.go.id" class="text-[#009B4D] hover:underline" target="_blank" rel="noopener">Dukcapil Kab. Madiun</a>
                 <span>All rights reserved.</span>
                 <span class="mx-2">|</span>
+                <span>Persembahan untuk Kabupaten Madiun dari Mahasiswa Magang</span>
+                <span class="mx-2">|</span>
                 <a href="{{ route('public.terms') }}" class="text-[#009B4D] hover:underline">Syarat & Ketentuan</a>
             </div>
             <div class="flex items-center justify-center gap-2 sm:justify-end">
