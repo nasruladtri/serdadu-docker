@@ -81,8 +81,6 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-serdadu}
-      MYSQL_USER: ${DB_USERNAME:-root}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-#Serdadu123}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-#Serdadu123}
     labels:
       - "io.portainer.stack.name=serdadu"
