@@ -99,14 +99,14 @@ services:
     container_name: serdadu_phpmyadmin
     restart: unless-stopped
     environment:
-      PMA_HOST: db
+      PMA_HOST: serdadu_db
       PMA_PORT: 3306
       PMA_ABSOLUTE_URI: https://db.nasruladitri.space
       UPLOAD_LIMIT: 100M
     expose:
       - "80"
     depends_on:
-      - db
+      - serdadu_db
     networks:
       - serdadu_network
     labels:
