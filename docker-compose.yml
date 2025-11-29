@@ -31,9 +31,9 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
-      - .:/var/www/html # Mount entire application
-      - ./storage:/var/www/html/storage
-      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+      # Use named volumes to persist storage and cache without overwriting app files
+      - app_storage:/var/www/html/storage
+      - app_cache:/var/www/html/bootstrap/cache
     environment:
       # Application Settings
       - APP_NAME=${APP_NAME:-SERDADU}
@@ -145,4 +145,8 @@ volumes:
   nginx_data:
     driver: local
   nginx_letsencrypt:
+    driver: local
+  app_storage:
+    driver: local
+  app_cache:
     driver: local
